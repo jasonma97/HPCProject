@@ -118,11 +118,14 @@ def timeTrials(src):
             #print(newPool)
             #print(len(newPool))
             t2 = time() - start
-            print(t2)
+            #print(t2)
             avgTime[i - 1] += t2/numTests
             print("Time for {0} Processors: {1}".format(i, t2))
     print(avgTime)
-        
+    resultFile = open('times.txt', 'a+')
+    for time in avgTime:
+        resultFile.write(str(time) + " ")
+    resultFile.write('\n')
 
 
 if __name__ == '__main__':
