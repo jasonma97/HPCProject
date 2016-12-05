@@ -33,7 +33,7 @@ def RabinCDC(LBAlist):
     rolling_hash = 0
     n = len(LBAlist)
     breakindices = []
-    for i in range(0,n-1):
+    for i in range(a,n-1):
         rolling_hash += sum(LBAlist[i-a:i])
         secondhash = string2numeric_hash(str(rolling_hash))
         if secondhash%9 == 0:
