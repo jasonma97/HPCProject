@@ -15,17 +15,21 @@ def genDataset(src, N, newDataSize):
 
     count = 0
     f = open('dummy.txt', 'w+')
+    num = [0 for x in range(N)]
     while (count < newDataSize):
         size = int(random.random() * (N + 1))
-        if size > 1 and size < N:
+        num[size] += 1
+        if size > 0 and size < N:
             writeData = random.choice(setOfSets[size])
             for data in writeData:
-                f.write(str(data) + '\n')
+                f.write(str(data))
             count += size
-        elif size == 1:
+        elif size == 0:
             writeData = random.choice(lines)
-            f.write(str(data) + '\n')
+            print("yo")
+            f.write(str(writeData))
     f.close()
+    print(num)
 
 
 
@@ -36,9 +40,9 @@ if __name__ == '__main__':
         src = sys.argv[1] # data buffer
         complexity = int(sys.argv[2])
         dataSize = int(sys.argv[3])
-        print(src)
-        print(complexity)
-        print(dataSize)
+        # print(src)
+        # print(complexity)
+        # print(dataSize)
         genDataset(src, complexity, dataSize)
     else:
         print("Usage: fastcdc.py <databuffer>")
