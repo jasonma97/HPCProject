@@ -25,6 +25,7 @@ import sys
 from multiprocessing import Pool
 from time import time
 numProcs  = 4
+numTests = 5
 
 
 def string2numeric_hash(text):
@@ -84,38 +85,44 @@ def timeTrials(src):
     global LBAlist
     LBAlist = target.readlines()
     LBAlist = [int(x) for x in LBAlist]
-
-
-
-    start = time()
-    serialCode(LBAlist)
-    t = time() - start
-    print(t)
-    time_list = []
     global numProcs
 
-    #MultiProcessor Run
-    for i in range(2, numProcs + 1):
-        start = time()
-        chunkSize = int(len(LBAlist)/numProcs)
-        jobs = []
-        for p in range(0,i):
-            if p == 0:
-                jobs.append((LBAlist[:chunkSize]))
-            elif p != i-1 and p > 0:
-                jobs.append((LBAlist[chunkSize*p:chunkSize*(p+1)]))
-            else:
-                jobs.append((LBAlist[chunkSize*p:]))
-        pool = Pool(i).map(RabinCDC, jobs)
-        newPool = []
-        for i in pool:
-            newPool += i
-        #print(newPool)
-        #print(len(newPool))
+    avgTime = [0 for x in range(numProcs )]
 
-        t2 = time() - start
-        print(t2)
-        time_list.append([i, t2])
+    for i in range(numTests):
+        start = time()
+        serialCode(LBAlist)
+        t = time() - start
+        print(t)
+        print("Time for 1 Processors: {0}".format(t))
+        avgTime[0] = avgTime[0] + t/numTests
+        print(avgTime)
+
+    #MultiProcessor Run
+    for test in range(numTests):
+        for i in range(2, numProcs + 1):
+            start = time()
+            chunkSize = int(len(LBAlist)/numProcs)
+            jobs = []
+            for p in range(0,i):
+                if p == 0:
+                    jobs.append((LBAlist[:chunkSize]))
+                elif p != i-1 and p > 0:
+                    jobs.append((LBAlist[chunkSize*p:chunkSize*(p+1)]))
+                else:
+                    jobs.append((LBAlist[chunkSize*p:]))
+            pool = Pool(i).map(RabinCDC, jobs)
+            newPool = []
+            for p in pool:
+                newPool += p
+            #print(newPool)
+            #print(len(newPool))
+            t2 = time() - start
+            print(t2)
+            avgTime[i - 1] += t2/numTests
+            print("Time for {0} Processors: {1}".format(i, t2))
+    print(avgTime)
+        
 
 
 if __name__ == '__main__':
@@ -123,6 +130,6 @@ if __name__ == '__main__':
         src = sys.argv[1] # data buffer
         timeTrials(src)
     elif len(sys.argv) == 1:
-        timeTrials('homes1')
+        timeTrials('first500.txt')
     else:
         print("Usage: fastcdc.py <databuffer>")
