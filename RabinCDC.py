@@ -130,6 +130,6 @@ if __name__ == '__main__':
         src = sys.argv[1] # data buffer
         timeTrials(src)
     elif len(sys.argv) == 1:
-        timeTrials('first500.txt')
+        timeTrials('homes1')
     else:
         print("Usage: fastcdc.py <databuffer>")
