@@ -5,7 +5,7 @@ def genDataset(src, N, newDataSize):
     random.seed(time.time())
     lines = open(src, 'r+').readlines()
     setOfSets = []
-    for a in range(2,N):
+    for a in range(N + 1):
         setOfSets.append([])
     for i in range(len(lines)):
         for b in range(2,N):
@@ -14,7 +14,7 @@ def genDataset(src, N, newDataSize):
                 setOfSets[b].append(newSet)
 
     count = 0
-    f = open('dummy', 'w+')
+    f = open('dummy.txt', 'w+')
     while (count < newDataSize):
         size = int(random.random() * (N + 1))
         if size > 1 and size < N:
@@ -36,6 +36,9 @@ if __name__ == '__main__':
         src = sys.argv[1] # data buffer
         complexity = int(sys.argv[2])
         dataSize = int(sys.argv[3])
+        print(src)
+        print(complexity)
+        print(dataSize)
         genDataset(src, complexity, dataSize)
     else:
         print("Usage: fastcdc.py <databuffer>")
