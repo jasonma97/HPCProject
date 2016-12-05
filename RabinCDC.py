@@ -34,7 +34,7 @@ def RabinCDC(LBAlist):
     n = len(LBAlist)
     breakindices = []
     for i in range(0,n-1):
-        rolling_hash += int(LBAlist[i])
+        rolling_hash += sum(LBAlist[i-a:i])
         secondhash = string2numeric_hash(str(rolling_hash))
         if secondhash%9 == 0:
             breakindices.append(i)
@@ -48,6 +48,7 @@ def main(src):
     target = open(src, 'r')
 
     LBAlist = target.readlines()
+    LBAlist = [int(x) for x in LBAlist]
 
     breakindices = RabinCDC(LBAlist)
 
