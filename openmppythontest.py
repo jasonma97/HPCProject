@@ -25,6 +25,7 @@ def testCode(n, procs):
         jobs.append((i*sizeSegment+1, (i+1)*sizeSegment))
 
     pool = Pool(procs).map(sum_nums, jobs)
+    print(pool)
     result = sum(pool)
     print(result)
     t = time() - start2
@@ -33,7 +34,10 @@ def testCode(n, procs):
 
 if __name__ == "__main__":
     results = []
-    for i in range(1, 6):
-        results.append(testCode(400000, i))
+    n = 1
+    print(hash(int))
+    print(hash('420'))
+    for i in range(1, n + 1):
+        results.append(testCode(10, i))
     print(results)
 
