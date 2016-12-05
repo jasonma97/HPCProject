@@ -93,10 +93,10 @@ def timeTrials(src):
         start = time()
         serialCode(LBAlist)
         t = time() - start
-        print(t)
+        #print(t)
         print("Time for 1 Processors: {0}".format(t))
         avgTime[0] = avgTime[0] + t/numTests
-        print(avgTime)
+        #print(avgTime)
 
     #MultiProcessor Run
     for test in range(numTests):
@@ -130,6 +130,6 @@ if __name__ == '__main__':
         src = sys.argv[1] # data buffer
         timeTrials(src)
     elif len(sys.argv) == 1:
-        timeTrials('homes1')
+        timeTrials('homes1212')
     else:
         print("Usage: fastcdc.py <databuffer>")
