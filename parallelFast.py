@@ -24,7 +24,7 @@ return i;
 import sys
 
 MIN_SIZE = 8
-MAX_SIZE = 50
+MAX_SIZE = 20
 I = 0
 HASH = 0
 GEAR = []
@@ -55,7 +55,8 @@ def blockbreak(LBA):
         HASH <<= 1
         HASH += int(GEAR[int(binary, 2)]) #Converts each 8 bit binary into integer and adds it to HASH
 
-
+def parallelcdc(a0, a1):
+    
 def main(src):
     '''
     Input: data buffer src
