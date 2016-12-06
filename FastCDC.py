@@ -22,7 +22,7 @@ for ; i < n; i++; do
 return i;
 '''
 import sys
-
+import time
 MIN_SIZE = 8
 MAX_SIZE = 50
 I = 0
@@ -60,17 +60,18 @@ def main(src):
     '''
     Input: data buffer src
     '''
+    print("Testing FastCDC on {0}".format(src))
     global I
     global GEAR
     global HASH
-
+    start = time.time()
     try:
         target = open("randoms", 'r')
         GEAR = target.readlines()
         target.close()
     except:
         gear_gen()
-
+    start = time.time()
     target = open(src, 'r')
 
     LBAlist = target.readlines()
@@ -95,7 +96,9 @@ def main(src):
             breakindices.append(num)
             I = 0
             HASH = 0
+    print(breakindices)
 
+    print("Total Runtime: {0}".format(str(time.time() - start)))
 
     outputfile = open("FastOutput", 'w')
     for i in breakindices:
@@ -107,5 +110,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         src = sys.argv[1] # data buffer
         main(src)
+    elif len(sys.argv) == 1:
+        main('homes18')
     else:
         print("Usage: fastcdc.py <databuffer>")

@@ -4,30 +4,41 @@ import time
 def genDataset(src, N, newDataSize):
     random.seed(time.time())
     lines = open(src, 'r+').readlines()
-    setOfSets = []
-    for a in range(N + 1):
-        setOfSets.append([])
-    for i in range(len(lines)):
-        for b in range(2,N):
-            newSet = lines[i:i + b]
-            if newSet not in setOfSets[b]:
-                setOfSets[b].append(newSet)
-
-    count = 0
+    # setOfSets = []
+    # for a in range(N + 1):
+    #     setOfSets.append([])
+    # print(setOfSets)
+    # for i in range(len(lines)):
+    #     if i % 100000 == 0:
+    #         print(i)
+    #     for b in range(2,N + 1):
+    #         newSet = lines[i:i + b ]
+    #         # For speed requirements, we left out this if statement
+    #         # Just need to assemble a list of possible sequences to write
+    #         #if newSet not in setOfSets[b]:
+    #         setOfSets[b].append(newSet)
+    # #print(setOfSets)
+    # print(len(setOfSets))
     f = open('dummy.txt', 'w+')
-    num = [0 for x in range(N)]
+    #print(setOfSets)
+    print("Now starting file generation")
+    fileLength = len(lines)
+    count = 0
+    num = [0 for x in range(N + 1)]
     while (count < newDataSize):
-        size = int(random.random() * (N + 1))
+        if count % 1000000 == 0:
+            print("Currently at line {0}".format(count))
+        size = int(random.random() * (N * 0.99) + 1)
         num[size] += 1
-        if size > 0 and size < N:
-            writeData = random.choice(setOfSets[size])
+        startIndex = int(random.random() * fileLength)
+        if size < 1 or size > N:
+            print("REEEE")
+        #print(size)
+        else:
+            writeData = lines[startIndex:startIndex + size]
             for data in writeData:
                 f.write(str(data))
             count += size
-        elif size == 0:
-            writeData = random.choice(lines)
-            print("yo")
-            f.write(str(writeData))
     f.close()
     print(num)
 
