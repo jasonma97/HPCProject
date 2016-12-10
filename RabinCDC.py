@@ -25,8 +25,9 @@ import sys
 import multiprocessing
 from time import time
 import threading
-numProcs  = 4
-numTests = 1
+global numProcs
+numProcs = 1
+numTests = 5
 global LBAlist
 LBAlist = []
 
@@ -189,19 +190,19 @@ def multiprocessingTest(src):
     LBAlist = [int(x) for x in LBAlist]
 
     global numProcs
-    avgTime = [0 for x in range(numProcs )]
+    avgTime = [0 for x in range(numProcs)]
 
-    for i in range(numTests):
-        start = time()
-        serialResult = serialCode(LBAlist)
-        t = time() - start
-        #print(t)
-        print("Time for 1 Processors: {0}".format(t))
-        avgTime[0] = avgTime[0] + t/numTests
-    print(avgTime)
+    # for i in range(numTests):
+    #     start = time()
+    #     serialResult = serialCode(LBAlist)
+    #     t = time() - start
+    #     #print(t)
+    #     print("Time for 1 Processors: {0}".format(t))
+    #     avgTime[0] = avgTime[0] + t/numTests
+    # print(avgTime)
     #print(serialResult)
     #MultiProcessor Run
-    for i in range(2, numProcs + 1):
+    for i in range(numProcs, numProcs + 1):
         for test in range(numTests):
             start = time()
             chunkSize = int(len(LBAlist)/numProcs)
@@ -381,6 +382,10 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         src = sys.argv[1] # data buffer
         multiprocessingTest(src)
+    elif len(sys.argv) == 3:
+        src = sys.argv[1] # data buffer
+        multiprocessingTest(src)
+        numProcs = sys.argv[2]    
     elif len(sys.argv) == 1:
         # multiprocessingTest('allhomes')
         # for i in range(1, 19):
@@ -397,4 +402,4 @@ if __name__ == '__main__':
         #     except:
         #         continue
     else:
-        print("Usage: fastcdc.py <databuffer>")
+        print("Usage: fastcdc.py <databuffer> <numProcs>")
