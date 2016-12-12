@@ -129,10 +129,7 @@ def serialTest(src, numTests):
     print("Average Serial Runtime: {0}".format(sum(avgTime)/len(avgTime)))
     return avgTime
 
-def testingSuite(fileL, numTests, numProcsL):
-    for file in fileL:
-        for num in numProcsL:
-            testRabinParallel(file, numTests, num)
+
 
 def testRabinParallel(src, numProcs, numTests):
     print("Testing Source File: " + str(src))
@@ -152,7 +149,7 @@ def testRabinParallel(src, numProcs, numTests):
         jobs = []
         for p in range(0,numProcs):
             q =  multiprocessing.Queue()
-            if p != i-1:
+            if p != numProcs-1:
                 proc = multiprocessing.Process(target = globalRabinCDC, args = (chunkSize*p,chunkSize*(p+1),q))
             else:
                 proc = multiprocessing.Process(target = globalRabinCDC, args = (chunkSize*p, len(LBAlist),q))
@@ -247,6 +244,11 @@ def timeTrials(src):
 
 
 
+def testingSuite(fileL, numProcsL, numTests):
+    for file in fileL:
+        for num in numProcsL:
+            testRabinParallel(file, num, numTests)
+
 
 if __name__ == '__main__':
     if len(sys.argv) == 2:
@@ -257,18 +259,7 @@ if __name__ == '__main__':
         multiprocessingTest(src)
         numProcs = sys.argv[2]    
     elif len(sys.argv) == 1:
-        # multiprocessingTest('allhomes')
-        # for i in range(1, 19):
-        #     try:
-        #         multiprocessingTest('homes' + str(i))
-        #     except:
-        #         continue
-        testingSuite(['homes1212'], 5, [15])
-        #threadingTest('homes18')
-        # for i in range(17, 18):
-        #     try:
-        #         testEverything('homes' + str(i))
-        #     except:
-        #         continue
+        testingSuite(['homes1212'], range(1,5) , 3)
+
     else:
         print("Usage: fastcdc.py <databuffer> <numProcs>")
