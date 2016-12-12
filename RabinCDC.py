@@ -129,6 +129,11 @@ def serialTest(src, numTests):
     print("Average Serial Runtime: {0}".format(sum(avgTime)/len(avgTime)))
     return avgTime
 
+def testingSuite(fileL, numTests, numProcsL):
+    for file in fileL:
+        for num in numProcsL:
+            testRabinParallel(file, numTests, num)
+
 def testRabinParallel(src, numProcs, numTests):
     print("Testing Source File: " + str(src))
     target = open(src, 'r')
@@ -140,11 +145,11 @@ def testRabinParallel(src, numProcs, numTests):
     LBAlist = [int(x) for x in LBAlist]
     avgTime = []
 
-    for i in range(numTest):
+    for i in range(numTests):
         start = time()
         chunkSize = int(len(LBAlist)/numProcs)
         listq = []
-
+        jobs = []
         for p in range(0,numProcs):
             q =  multiprocessing.Queue()
             if p != i-1:
@@ -163,22 +168,12 @@ def testRabinParallel(src, numProcs, numTests):
             proc.join()
             proc.terminate()
 
-        t2 = time() - start
+        t = time() - start
         avgTime.append(t)
-        print("Time for {0} Processors: {1}".format(i, t))
+        print("Time for {0} Processors: {1}".format(numProcs, t))
     print("Average Runtime for {0} Processes: {1}".format(numProcs, sum(avgTime)/numTests))
     return avgTime
 
-def testingSuite():
-    
-if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        src = sys.argv[1] # data buffer
-        multiprocessingTest(src)
-    elif len(sys.argv) == 1:
-        testRabinParallel('Data/homes1', 1, 1)
-    else:
-        print("Usage: fastcdc.py <databuffer>")
 
 
 
@@ -251,201 +246,6 @@ def timeTrials(src):
 """
 
 
-## COPIES ABOVE CODE, BUT NOW DOESN'T CREATE HUNDREDS OF PROCESSES
-def multiprocessingTest(src):
-    print("Testing Source File: " + str(src))
-    target = open(src, 'r')
-    global LBAlist
-    LBAlist = target.readlines()
-    LBAlist = [int(x) for x in LBAlist]
-
-    global numProcs
-    avgTime = [0 for x in range(numProcs)]
-
-    # for i in range(numTests):
-    #     start = time()
-    #     serialResult = serialCode(LBAlist)
-    #     t = time() - start
-    #     #print(t)
-    #     print("Time for 1 Processors: {0}".format(t))
-    #     avgTime[0] = avgTime[0] + t/numTests
-    # print(avgTime)
-    #print(serialResult)
-    #MultiProcessor Run
-    for i in range(numProcs, numProcs + 1):
-        for test in range(numTests):
-            start = time()
-            chunkSize = int(len(LBAlist)/numProcs)
-            jobs = []
-            listq = []
-            for p in range(0,i):
-                q =  multiprocessing.Queue()
-                if p != i-1:
-                    proc = multiprocessing.Process(target = globalRabinCDC, args = (chunkSize*p,chunkSize*(p+1),q))
-                else:
-                    proc = multiprocessing.Process(target = globalRabinCDC, args = (chunkSize*p, len(LBAlist),q))
-                proc.start()
-                jobs.append(proc)
-                listq.append(q)
-            #Process Synchronization
-            resultL = []
-
-            for que in listq:
-                resultL += que.get()
-            for proc in jobs:
-                #print("Try")
-                proc.join()
-                #print("We got here")
-                proc.terminate()
-                #print("Hi")
-
-            t2 = time() - start
-            avgTime[i - 1] += t2/numTests
-            print("Time for {0} Processors: {1}".format(i, t2))
-        print(avgTime)
-    resultFile = open('ProcessorTimesFinal.txt', 'a+')
-    resultFile.write(src + '\n')
-    for testTime in avgTime:
-        resultFile.write(str(testTime) + " ")
-    resultFile.write('\n')
-
-def threadingTest(src):
-    print("Testing Source File: " + str(src))
-    target = open(src, 'r')
-    global LBAlist
-    LBAlist = target.readlines()
-    LBAlist = [int(x) for x in LBAlist]
-
-    global numProcs
-    avgTime = [0 for x in range(numProcs )]
-
-    for i in range(numTests):
-        start = time()
-        serialResult = serialCode(LBAlist)
-        t = time() - start
-        #print(t)
-        print("Time for 1 Processors: {0}".format(t))
-        avgTime[0] = avgTime[0] + t/numTests
-    print(avgTime)
-    #print(serialResult)
-    #MultiProcessor Run
-    for i in range(2, numProcs + 1):
-        for test in range(numTests):
-            start = time()
-            chunkSize = int(len(LBAlist)/numProcs)
-            jobs = []
-            listq = []
-            for p in range(0,i):
-                if p != i-1:
-                    thr = ThreadWithReturnValue(target = RabinCDC, args = [LBAlist[chunkSize*p:chunkSize*(p+1)]])
-                else:
-                    thr = ThreadWithReturnValue(target = RabinCDC, args = [LBAlist[chunkSize*p:]])
-                thr.start()
-                jobs.append(thr)
-            #Process Synchronization
-            resultL = []
-            for thr in jobs:
-                print("Try")
-                #print("We got here")
-                resultL += thr.join()
-                #print("Hi")
-
-            #print(resultL)
-            #print(newPool)
-            #print(len(newPool))
-            t2 = time() - start
-            #print(t2)
-            avgTime[i - 1] += t2/numTests
-            print("Time for {0} Threads: {1}".format(i, t2))
-        print(avgTime)
-    resultFile = open('threadingTimes.txt', 'a+')
-    resultFile.write(src + '\n')
-    for testTime in avgTime:
-        resultFile.write(str(testTime) + " ")
-    resultFile.write('\n')
-
-def testSameProblemScale():
-    print("Testing Problem Scalability")
-    target = open('homestest1', 'r')
-    global LBAlist
-    LBAlist = target.readlines()
-    LBAlist = [int(x) for x in LBAlist]
-
-    global numProcs
-    avgTime = [0 for x in range(numProcs )]
-
-    for i in range(numTests):
-        start = time()
-        serialResult = serialCode(LBAlist)
-        t = time() - start
-        #print(t)
-        print("Time for 1 Processors: {0}".format(t))
-        avgTime[0] = avgTime[0] + t/numTests
-    print(avgTime)
-    #print(serialResult)
-    #MultiProcessor Run
-    for i in range(2, numProcs + 1):
-        target = open('homestest' + str(i), 'r')
-        LBAlist = target.readlines()
-        LBAlist = [int(x) for x in LBAlist]
-        print(len(LBAlist))
-        for test in range(numTests):
-            start = time()
-            chunkSize = int(len(LBAlist)/numProcs)
-            jobs = []
-            listq = []
-            for p in range(0,i):
-                q =  multiprocessing.Queue()
-                if p != i-1:
-                    proc = multiprocessing.Process(target = globalRabinCDC, args = (chunkSize*p,chunkSize*(p+1),q))
-                else:
-                    proc = multiprocessing.Process(target = globalRabinCDC, args = (chunkSize*p, len(LBAlist),q))
-                proc.start()
-                jobs.append(proc)
-                listq.append(q)
-            #Process Synchronization
-            resultL = []
-
-            for que in listq:
-                resultL += que.get()
-            for proc in jobs:
-                #print("Try")
-                proc.join()
-                #print("We got here")
-                proc.terminate()
-                #print("Hi")
-
-            t2 = time() - start
-            avgTime[i - 1] += t2/numTests
-            print("Time for {0} Processors: {1}".format(i, t2))
-        print(avgTime)
-
-    avgSerialTime = [0 for x in range(numProcs)]
-    for pNum in range(1,numProcs + 1):
-        for i in range(numTests):
-            target = open('homestest' + str(pNum), 'r')
-            LBAlist = target.readlines()
-            LBAlist = [int(x) for x in LBAlist]
-            # print(len(LBAlist))
-            start = time()
-            serialResult = serialCode(LBAlist)
-            t = time() - start
-            #print(t)
-            print("Serial Time: {0}".format(t))
-            avgSerialTime[pNum - 1] = avgSerialTime[pNum - 1] + t/numTests
-        print(avgSerialTime)
-
-
-
-    resultFile = open('problemScaling.txt', 'a+')
-    resultFile.write('Scaling Times' + '\n')
-    for testTime in avgTime:
-        resultFile.write(str(testTime) + " ")
-    resultFile.write('\n')
-    resultFile.write('Serial Times' + '\n')
-    for testTime in avgSerialTime:
-        resultFile.write(str(testTime) + " ")
-    resultFile.write('\n')
 
 
 if __name__ == '__main__':
@@ -463,8 +263,7 @@ if __name__ == '__main__':
         #         multiprocessingTest('homes' + str(i))
         #     except:
         #         continue
-        testSameProblemScale()
-
+        testingSuite(['homes1212'], 5, [15])
         #threadingTest('homes18')
         # for i in range(17, 18):
         #     try:
