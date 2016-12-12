@@ -247,7 +247,14 @@ def timeTrials(src):
 def testingSuite(fileL, numProcsL, numTests):
     for file in fileL:
         for num in numProcsL:
-            testRabinParallel(file, num, numTests)
+            result = testRabinParallel(file, num, numTests)
+            f = open('result', 'a+')
+            f.write(file + ':')
+            f.write(str(num) + '\n')
+            for runtime in result:
+                f.write(str(runtime) +', ')
+            f.write('\n')
+            f.close()
 
 
 if __name__ == '__main__':
@@ -259,7 +266,7 @@ if __name__ == '__main__':
         multiprocessingTest(src)
         numProcs = sys.argv[2]    
     elif len(sys.argv) == 1:
-        testingSuite(['homes1212'], range(1,5) , 3)
+        testingSuite(['homes1212'], range(5, 0, -1) , 10)
 
     else:
         print("Usage: fastcdc.py <databuffer> <numProcs>")
