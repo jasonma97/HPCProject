@@ -266,7 +266,7 @@ if __name__ == '__main__':
         multiprocessingTest(src)
         numProcs = sys.argv[2]    
     elif len(sys.argv) == 1:
-        testingSuite(['homes1212'], range(5, 0, -1) , 10)
+        testingSuite(['homes1212'], range(20, 0, -1) , 10)
 
     else:
         print("Usage: fastcdc.py <databuffer> <numProcs>")
