@@ -105,20 +105,23 @@
 
 	\section{Data}
 	\subsection{Practical Trace Data}
+	Practical Trace Data was obtained through the SNIA IOTTA Trace Repository, which stores traces from various research endeavours across the world. Specifically, Block I/O Traces from the Florida International University, collected on the home directories of multiple different end users were used for practical data. Practical Trace Data numbered upto 3.5 Million lines on the largest traces. We used \texttt{blkparse} to read in the trace data and used a python script to extract block number information from it. \\
+	
+	For overall testing, we used specifically the \textit{homes1, homes2, homes3} and \textit{homes4} traces. These were chosen because they belong to 4 different end users and record block access over a period of two weeks, which allows for a fair amount of statistical variability while also allowing for patterns in end-user usage to be apparent [Verma, Koller et al.]. Moreover, for the generation of synthetic traces (See Section 4.2), we needed practical trace data with easily identifiable patterns so that we could use a simple Markov Chain Generator to synthetically increase trace sizes.\\
+			
 	\subsection{Synthetic Trace Data}
 	In order to gain a more complete understanding of parallelization improvements, we synthesized trace data using a simple Markov Chain on the practical data. We generate this new file using an aggregated file of our practical trace data as a source. The size of the chunks with which we sampled the source files ranged from 1 line to 20 lines. This method allows us to maintain patterns from the data it is sampled from while allowing tests at large volumes. Thus, we can more carefully tune our tests to our specific requirements, and test conditions outside of what the practical trace data covers. Additionally, the randomness of the index from which we sample and the size of the chunk we sample out allows us to maintain randomness in our testing data to mimic real world situations.\\
 	
-	For our testing, we created files that are 1 million to 200 million lines. We increment the file sizes by 10 million lines from 1 million to 100 million, and by 50 million between 100 million and 200 million lines. These file sizes will be adequate in covering the full behavior our parallelized RabinCDC at small file sizes, and its behavior as the file sizes approach infinity, which let's us analyze the O(n) behavior. Additionally, the choices for which sizes we used were chosen, so that the weak scaling efficiency could also be easily tested.
+	For our testing, we created files that are 1 million to 200 million lines. We increment the file sizes by 10 million lines from 1 million to 100 million, and by 50 million between 100 million and 200 million lines. These file sizes will be adequate in covering the full behaviour our parallelized RabinCDC at small file sizes, and its behaviour as the file sizes approach infinity, which let's us analyze the O(n) behaviour. Additionally, the choices for which sizes we used were chosen, so that the weak scaling efficiency could also be easily tested.
 	
 	
 	\section{Experiments}
-	We tested our algorithms in a Python3 environment, using the \texttt{multiprocessing} module to implement parallelization. We will note that this only creates multiple processes, and allows the CPU's scheduler to handle the parallelization of these processes, but these results are still valid in that they show how one can easily parallelize any algorithm for significant runtime improvement.
+	We tested our algorithms in a 64-bit Python3 environment, using the \texttt{multiprocessing} module to implement parallelization. We will note that this only creates multiple processes, and allows the CPU's scheduler to handle the parallelization of these processes, but these results are still valid in that they show how one can easily parallelize the RabinCDC algorithm for significant runtime improvement.\\
 	
-	
+	We shall further note that Python3 was chosen as the testing environment primarily due to the ease of integration of the python \texttt{multiprocessing} environment, as well as the significantly low overhead of said environment in Python3 [Fowler]. Moreover, the Python3 dev environment was already set up on Comet and on our test machine. Further, we realized that the total communication time and startup time between processes could be significantly lowered due to the \texttt{pool} utility. Finally, we also found that Python3 does it's own optimization of the interpretation process. Due to the significant performance improvement found in the implementations of Python3 \texttt{multiprocessing} over our original implementation of C++ \texttt{OpenMP}, we decided to implement the development in Python3. 
 	
 	\subsection{Practical Trace Data Tests}
-	We used practical trace data from the work of Kanishk and Keller from the summer of 2016. Tests were run using a Surface Pro 3 with 2 cores.\\
-	
+		
 	With the practical trace data, we timed the run time over 10 tests using from 1 process to 5 processes. Given the uneven size of these files, it is only feasible to test the strong scaling efficiency.
 	\subsection{Synthetic Trace Data Tests}
 	With data that we can generate, we gain much better control over the types of tests that we can run. Thus, using synthetic trace data, we can specifically target the strong and weak scaling efficiency of a parallel Rabin CDC algorithm. To generate data, we run the tests 10 times and average the time across all the runs to produce an average run time. \\
