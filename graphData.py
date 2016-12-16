@@ -45,6 +45,7 @@ def main2():
             timeL += [[lines[i].replace('\n',''), times]]
     #print(timeL)
 
+    print(timeL)
     plt.title("Strong Scaling Efficiency vs Number of Processes")
     plt.axis([1,5, 0, 1.6])
     for timeResult in timeL:
