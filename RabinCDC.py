@@ -138,8 +138,7 @@ def testRabinParallel(src, numProcs, numTests):
         return serialTest(src, numTests)
 
     global LBAlist
-    LBAlist = target.readlines()
-    LBAlist = [int(x) for x in LBAlist]
+    LBAlist = [int(x) for x in target]
     avgTime = []
 
     for i in range(numTests):
