@@ -105,19 +105,20 @@
 
 	\section{Data}
 	\subsection{Practical Trace Data}
-	We used practical trace data from the work of Kanishk and Keller from the summer of 2016. \\
+	We used practical trace data from the work of Kanishk and Kuenning from the summer of 2016. \\
 	\subsection{Synthetic Trace Data}
 	In order to gain a more complete understanding of parallelization improvements, we synthesized trace data using a simple Markov Chain on the practical data. We generate this new file using an aggregated file of our practical trace data as a source. The size of the chunks with which we sampled the source files ranged from 1 line to 20 lines. This method allows us to maintain patterns from the data it is sampled from while allowing tests at large volumes. Thus, we can more carefully tune our tests to our specific requirements, and test conditions outside of what the practical trace data covers. Additionally, the randomness of the index from which we sample and the size of the chunk we sample out allows us to maintain randomness in our testing data to mimic real world situations.\\
 	
 	For our testing, we created files that are 1 million to 10 million lines. We increment the file sizes by 1 million lines. These file sizes will be adequate in covering the full behavior our parallelized RabinCDC at small file sizes, and its behavior as the file sizes approach infinity, which let's us analyze the O(n) behavior. Additionally, the choices for which sizes we used were chosen, so that the weak scaling efficiency could also be easily tested.
 	
-	We considered the possibility of testing even larger file sizes, but the process of generating these files were deemed to take too long, and our results may be over fitted to the practical trace data we have. If given more practical trace data, and a better system to test on, we will consider more intensive stress testing.
+	We considered the possibility of testing even larger file sizes, but the process of generating these files were deemed to take too long, and our results may be over fitted to the practical trace data we have. If given more practical trace data and a better system to test on, we will consider more intensive stress testing.
 	
 	
 	\section{Experiments}
-	We tested our algorithms in a Python3 environment, using the \texttt{multiprocessing} module to implement parallelization. We will note that this only creates multiple processes, and allows the CPU's scheduler to handle the parallelization of these processes, but these results are still valid in that they show how one can easily parallelize any algorithm for significant runtime improvement.
+	We tested our algorithms in a Python3 environment, using the \texttt{multiprocessing} module to implement parallelization. We will note that this only creates multiple processes, and allows the CPU's scheduler to handle the parallelization of these processes, but these results are still valid in that they show how one can easily parallelize any algorithm for significant runtime improvement. The required Python modules we used for testing were \texttt{multiprocessing} for parallelizing, \texttt{time} for timing our algorithm performance, \texttt{random} for data generation, and \texttt{matplotlib.pyplot} for graphing purposes. 
 	
-	Our testing system is a Windows Surface Pro 3 with an Intel(R) Core(TM) i5-4300 CPU @ 1.90 GHZ. It has 2 Cores and 4 logical processors with cache sizes of 128 KB, 512 KB, 3.0 MB for the L1, L2, and L3 cache respectively. We considered the possibility of using Comet for testing, but due to incompatibility issues, we decided against using Comet. This system is adequate for showing that any individual can parallelize their algorithms.
+	Our testing system is a Windows Surface Pro 3 with an Intel(R) Core(TM) i5-4300 CPU @ 1.90 GHZ. It has 2 Cores and 4 logical processors with cache sizes of 128 KB, 512 KB, 3.0 MB for the L1, L2, and L3 cache respectively. We considered the possibility of using Comet for testing, but due to incompatibility issues, we decided against using Comet. This system is adequate for showing that any individual can parallelize their algorithms. 
+
 	
 	
 		\begin{figure}
@@ -133,10 +134,7 @@
 	
 	To test the strong scaling of our parallelization, we ran our algorithm on the test data serially, and then increased the number of processors up to 5. We time how long it takes in each case, starting from when the algorithm is passed the data in the serial case and starting from when we create the new processes in the parallel case. Our tests ranged from files that were 1 to 10 million lines long. Using these results, we can uncover how well parallelization affects Rabin CDC at small to large file sizes.\\
 	
-	To test the weak scaling efficiency, we also created file sizes ranging from 1 to 5 million lines long. We then ran our CDC algorithms on these files keeping a constant ratio of 1 million lines to one process. \\
-	
-	\subsection{Baselines}
-	In addition to RabinCDC, we also run AECDC and FastCDC on each file to get an idea of how well our parallelization compares to well known context defined chunking algorithms. We run the algorithms on the exact same files, and average times across 10 runs.  
+	To test the weak scaling efficiency, we also created file sizes ranging from 1 to 5 million lines long. We then ran our CDC algorithms on these files keeping a constant ratio of 1 million lines to one process. \\ 
 	
 	\section{Results}
 	\subsection{Strong Scaling Efficiencies}
@@ -188,6 +186,7 @@
 	
 	Unfortunately, the Big O runtime of our algorithms were still O(n). Though this makes sense when analyzing the purpose of parallelization, which only splits up the work among many processes, so increasing the workload still increases the processing time linearly, just by a lesser amount than if we ran the code in serial. 
 	
+	Our results have shown that parallelization can provide valuable improvements to CDC algorithms. While the improvements may not scale as well on individual computers, we believe that our results show promising results for its effectiveness on super computers. We hope to continue our work with further testing on the weak scaling efficiencies of our parallel RabinCDC, and possibly testing on Comet if they ever update to 64-bit Python. 
 
 	\section{Further Work}
 	In the future, we will ideally test our algorithms on Comet, San Diego's Super Computer, for more intensive tests. We had initially planned on running our tests on Comet, but there were some system limitations that prohibited us from testing the scenarios that would be best run on Comet. One, Comet runs 32-bit Python 2.66, which limits the amount of RAM we can use while running RabinCDC. Due to our RabinCDC implementation, we required a 64-bit Python version, so that we could utilize more RAM. This would also produce conflicting results since the 32-bit limit would impact the stress tests that we had planned. Comet's main benefit would be the ability to test very large files, but the 32-bit limit would severely reduce the capability of Python to parse through these files. However from our initial tests on comet, we still recorded significant run time improvements for up to 20 processes. At that point with the file sizes we tested, we ran into the same limitation where the time it took to spawn the processes took a significant portion of the runtime, which greatly reduced the scaling efficiencies. 
@@ -199,6 +198,10 @@
 	However, we would still like to perform large tests with Comet, so we would ideally test on Comet in the future if its Python version is updated to a 64-bit version. This would allow us to test a larger variety of conditions. Even if we do not test on Comet, we plan on continuing tests with a better system that has more cores, so that we can clearly see the benefits of parallelization. Since the \texttt{multiprocessing} module only spawns more processes, the breakpoint at which we become limited by the system's task scheduler is reached relatively quickly on our testing system (at about 5 processes). We had planned to graph our data over a larger x-axis range by testing a stronger desktop computer, but the system's Python environment was not compatible with the code we had written.
 	
 	Another possibility of more in-depth testing would be to test a larger variety of algorithms, possible even parallelizing AECDC as well, so that we can see how effective parallelization can be for slow algorithms. With the possibility of parallelization, it might bring up other algorithms that were deemed slow, and allow them to compete with FastCDC. Given our results, we have shown that even basic parallel processing will produce significant improvements in runtime, so some algorithms which may have terrible serial runtime compared to FastCDC can perform as effectively when parallelized. 
+	
+	As for other methods of parallelization, we looked into the \texttt{threading} module that Python 3 has, but we did not see enough significant benefits to justify further testing. One interesting note is that for small file sizes, the \texttt{threading} module outperformed the \texttt{multiprocessing} module. This is likely due to the much smaller overhead of spawning new threads instead of spawning processes. However, at larger file sizes, multi-threading did not show much improvement over the serial code, so we decided against using it. 
+	
+	There also exists the possibility of utilizing \texttt{Cython} or \texttt{pymp}. Cython would allow us to easily port Python code to faster C code, and allow us to bypass the global interpreter lock of Python, so we can attempt multi-threading. Pymp is a Python version of OpenMP, which would be interesting to test, since it would showcase the effectiveness of well known parallelization package that has been ported to Python. 
 	  \begin{thebibliography}{1}
 	  
 	  \bibitem{notes} [1] Wen et al. “FastCDC: a Fast and Efficient Content-Defined Chunking Approach for Data Deduplication.” USENIX Annual Technical Conference (USENIC ATC ’16), Jan. 2016, www.usenix.org/system/files/conference/atc16/atc16-paper-xia.pdf. \\
