@@ -12,18 +12,18 @@ def main():
             times = [[int(time) + 1,times[time]] for time in range(len(times)) if '\n' not in times[time]]
             timeL += [[lines[i].replace('\n',''), times]]
     plt.title("Weak Scaling Test")
-    plt.axis([1,5, 0, 1.6])
+    # plt.axis([1,5, 0, 1.6])
 
     print(timeL)
     # timeL = [timeL[0]]
-    # plt.axis([1,5,0, 25])
+    plt.axis([1,5,0, 25])
 
     for test in timeL:
         print(test)
         #Graphing strong scaling
-        newResult = [float(test[1][0][1])/ float(timing[1])/ int(timing[0]) for timing in test[1]]
+        # newResult = [float(test[1][0][1])/ float(timing[1])/ int(timing[0]) for timing in test[1]]
         # print(newResult)
-        # newResult = [(float(timing[1])) for timing in test[1]]
+        newResult = [(float(timing[1])) for timing in test[1]]
         newResult = [0] + newResult
         print(newResult)
         print(test[0])
@@ -33,7 +33,7 @@ def main():
     plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=4,
            ncol=1, borderaxespad=0.)
     plt.xlabel("Problem Scale")
-    plt.ylabel('Scaling Efficiency')
+    plt.ylabel('Runtime (s)')
     SIZE = 25
     bigSize = 50
     plt.rc('font', size=SIZE)  # controls default text sizes
@@ -104,7 +104,7 @@ def main2():
     plt.rc('axes', labelsize=500)  # fontsize of the x and y labels
     plt.rc('xtick', labelsize=SIZE)  # fontsize of the tick labels
     plt.rc('ytick', labelsize=SIZE)  # fontsize of the tick labels
-    plt.rc('legend', fontsize=SIZE)  # legend fontsize
+    plt.rc('legend', fontsize=10)  # legend fontsize
     plt.rc('figure', titlesize=SIZE * 2)  # fontsize of the figure title
     plt.show()
 
