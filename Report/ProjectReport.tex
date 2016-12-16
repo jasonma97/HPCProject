@@ -105,7 +105,8 @@
 
 	\section{Data}
 	\subsection{Practical Trace Data}
-	We used practical trace data from the work of Kanishk and Kuenning from the summer of 2016. \\
+
+	Practical trace data from the work of Kanishk and Kuenning from the summer of 2016. \\
 	\subsection{Synthetic Trace Data}
 	In order to gain a more complete understanding of parallelization improvements, we synthesized trace data using a simple Markov Chain on the practical data. We generate this new file using an aggregated file of our practical trace data as a source. The size of the chunks with which we sampled the source files ranged from 1 line to 20 lines. This method allows us to maintain patterns from the data it is sampled from while allowing tests at large volumes. Thus, we can more carefully tune our tests to our specific requirements, and test conditions outside of what the practical trace data covers. Additionally, the randomness of the index from which we sample and the size of the chunk we sample out allows us to maintain randomness in our testing data to mimic real world situations.\\
 	
@@ -130,7 +131,7 @@
 
 	With the practical trace data, we timed the run time over 10 tests using from 1 process to 5 processes. Given the uneven size of these files, it is only feasible to test the strong scaling efficiency.
 	\subsection{Synthetic Trace Data Tests}
-	With data that we can generate, we gain much better control over the types of tests that we can run. Thus, using synthetic trace data, we can specifically target the strong and weak scaling efficiency of a parallel Rabin CDC algorithm. To generate data, we run the tests 10 times and average the time across all the runs to produce an average run time. \\
+	With data that we can generate, we gain much better control over the types of tests that we can run. Thus, using synthetic trace data, we can specifically target the strong and weak scaling efficiency of a parallel Rabin CDC algorithm. To generate data, we run the tests 10 times and average the time across all the runs to produce an average run time. We will then compare these average run times against each other. \\
 	
 	To test the strong scaling of our parallelization, we ran our algorithm on the test data serially, and then increased the number of processors up to 5. We time how long it takes in each case, starting from when the algorithm is passed the data in the serial case and starting from when we create the new processes in the parallel case. Our tests ranged from files that were 1 to 10 million lines long. Using these results, we can uncover how well parallelization affects Rabin CDC at small to large file sizes.\\
 	
@@ -152,7 +153,7 @@
 		\end{figure}
 	From our results, we see an overall decreasing trend of runtime at the larger file sizes from Figure 1. This is a notable result since it shows with simple parallelization that decent performance gains can be made. However, we note that the performance improvements are relatively minor.
 	
-	When running tests on small data files (number of lines less than 1 million), there were no significant improvements in the runtimes. In fact for the very small files, there were adverse effects on the run time. We believe these results are due to the fact that at these small file sizes, the benefit of using multiple processes is outweighed by the cost of spawning said processes. This may indicate that parallelizing RabinCDC for small file sizes is not optimal, and may in fact incur a cost.\\
+	When running tests on small data files (number of lines less than 1 million), there were no significant improvements in the runtimes. In fact for the very small files, there were adverse effects on the run time. We believe these results are due to the fact that at these small file sizes, the benefit of using multiple processes is outweighed by the cost of spawning said processes. This may indicate that parallelizing RabinCDC for small file sizes is not optimal, and may in fact incur a run time cost. While this is to be expected, it does highlight one of the consequences of parallelization in that there are some costs that must be paid to get a speed up.\\
 	
 	In contrast, there seem to be a clear benefit to parallelizing RabinCDC at large file sizes. Particularly for homes3, and homes1212, which had 2.5 million lines and 3.5 million lines respectively, there were great improvements. We see on the system we tested on that we were able to reduce the run time of RabinCDC to about 60\% of the serial run time. This shows great improvement since parallelizing with the \texttt{multiprocessing} module was relatively simple. This implies that any code can be parallelized with ease and great benefit. As we can see Figure 1, the run time noticeably decreases when increasing the number of processes. 
 	
