@@ -106,7 +106,10 @@
 	\section{Data}
 	\subsection{Practical Trace Data}
 
-	Practical trace data from the work of Kanishk and Kuenning from the summer of 2016. \\
+	Practical Trace Data was obtained through the SNIA IOTTA Trace Repository, which stores traces from various research endeavours across the world. Specifically, Block I/O Traces from the Florida International University, collected on the home directories of multiple different end users were used for practical data. Practical Trace Data numbered upto 3.5 Million lines on the largest traces. We used \texttt{blkparse} to read in the trace data and used a python script to extract block number information from it. \\
+	
+	For overall testing, we used specifically the \textit{homes1, homes2, homes3} and \textit{homes4} traces. These were chosen because they belong to 4 different end users and record block access over a period of two weeks, which allows for a fair amount of statistical variability while also allowing for patterns in end-user usage to be apparent [Verma, Koller et al.]. Moreover, for the generation of synthetic traces (See Section 4.2), we needed practical trace data with easily identifiable patterns so that we could use a simple Markov Chain Generator to synthetically increase trace sizes.\\
+	\\
 	\subsection{Synthetic Trace Data}
 	In order to gain a more complete understanding of parallelization improvements, we synthesized trace data using a simple Markov Chain on the practical data. We generate this new file using an aggregated file of our practical trace data as a source. The size of the chunks with which we sampled the source files ranged from 1 line to 20 lines. This method allows us to maintain patterns from the data it is sampled from while allowing tests at large volumes. Thus, we can more carefully tune our tests to our specific requirements, and test conditions outside of what the practical trace data covers. Additionally, the randomness of the index from which we sample and the size of the chunk we sample out allows us to maintain randomness in our testing data to mimic real world situations.\\
 	
